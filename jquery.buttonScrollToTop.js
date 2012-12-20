@@ -1,78 +1,60 @@
 (function($){
-/*minWindowWidth - минимальный размер окна, при котором кнопка должна менять свое поведение
-minWidth - минимальный размер окна, при котором кнопка должна скрываться полностью
-rightPosition - постоянный отступ кнопки от правого края окна
-buttonWidth - ширина кнопки
-
-$('selector').button(params);
-params:
-	speed: int
-	min-scroll: int
-	callback: fun()
-	click: fun()
-	hidden: fun()
-	min-width: int
-	easing: str
-*/
 	jQuery.fn.buttonScrollToTop = function(params){
-		var params = params || {};
+		var settings = {
+			minScroll: 0,
+			minWidth: 900,
+			speed: 1000,
+			easing: 'easeInSine',
+			click: function(item) {
+				item.click(function() {
+					$('html, body').animate({
+						'scrollTop': 0
+						}, settings.speed, settings.easing, function() {
+							item.stop(true, true);
+							settings.callback()
+						});
+					return false;
+				})
+			},
+			hidden: function(item) {
+				item.hide(this.speed);
+			},
+			callback: function() {
+				return false
+			}
+		};
 
-		if (typeof params !== 'object') {
-			params.minWindowWidth = 1315;
-			params.minWidth = 1215;
-			params.rightPosition = 50;
-			params.buttonWidth = 100;
-			params.speed = 500;
-		}
+		return this.each(function() {
+			if (params) {
+				$.extend(settings, params);
+			}
 
-		var item = $(this);
-		var divider = params.buttonWidth/(params.rightPosition/2);
-		$$.hideScroll = function() {
+			var item = $(this);
 			$(window).resize(function() {
-				$(window).scroll();
-				if (($(window).width() < params.minWindowWidth) && ( $(window).width() > params.minWidth)) {
-					item.css('right', params.rightPosition/2 - (params.minWindowWidth - $(window).width())/divider + 'px');
-				} else if ($(window).width() < params.minWidth) {
-					item.addClass('hidden').hide(params.speed);
-				}
-
-				if ($(window).width() > params.minWidth) {
+				if ($(window).width() > settings.minWidth) {
 					item.removeClass('hidden');
-					item.css('right', params.rightPosition/2 - (params.minWindowWidth - $(window).width())/divider + 'px');
-
 					if (item.hasClass('scroll')) {
-						item.show(params.speed);
+						item.show(settings.speed);
+					}
+				} else {
+					item.addClass('hidden');
+					if (item.hasClass('scroll')) {
+						settings.hidden(item);
 					}
 				}
-
-				if ($(window).width() > params.minWindowWidth) {
-					item.css('right', params.rightPosition+'px');
-				}
-
 			});
-			$(window).resize();
-		};
 
-		$$.scrollTop = function() {
-			item.click(function() {
-				$('html, body').animate({
-				'scrollTop': 0
-				}, params.speed, function() {
-					item.stop(true, true);
-				});
-			return false;
-			});
+			settings.click(item);
 
 			$(window).scroll(function() {
-				if ($(window).scrollTop() > 0 && !item.hasClass('hidden')) {
+				if ($(window).scrollTop() > settings.minScroll && !item.hasClass('hidden')) {
 					item.addClass('scroll');
-					item.show(params.speed);
+					item.show(settings.speed);
 				} else {
 					item.removeClass('scroll');
-					item.hide(params.speed);
+					settings.hidden(item);
 				}
 			});
-			$(window).scroll();
-		};
+		});
 	};
 })(jQuery);
