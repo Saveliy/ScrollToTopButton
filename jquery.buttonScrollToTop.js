@@ -2,7 +2,18 @@
 /*minWindowWidth - минимальный размер окна, при котором кнопка должна менять свое поведение
 minWidth - минимальный размер окна, при котором кнопка должна скрываться полностью
 rightPosition - постоянный отступ кнопки от правого края окна
-buttonWidth - ширина кнопки */
+buttonWidth - ширина кнопки
+
+$('selector').button(params);
+params:
+	speed: int
+	min-scroll: int
+	callback: fun()
+	click: fun()
+	hidden: fun()
+	min-width: int
+	easing: str
+*/
 	jQuery.fn.buttonScrollToTop = function(params){
 		var params = params || {};
 
@@ -11,6 +22,7 @@ buttonWidth - ширина кнопки */
 			params.minWidth = 1215;
 			params.rightPosition = 50;
 			params.buttonWidth = 100;
+			params.speed = 500;
 		}
 
 		var item = $(this);
@@ -21,7 +33,7 @@ buttonWidth - ширина кнопки */
 				if (($(window).width() < params.minWindowWidth) && ( $(window).width() > params.minWidth)) {
 					item.css('right', params.rightPosition/2 - (params.minWindowWidth - $(window).width())/divider + 'px');
 				} else if ($(window).width() < params.minWidth) {
-					item.addClass('hidden').hide(500);
+					item.addClass('hidden').hide(params.speed);
 				}
 
 				if ($(window).width() > params.minWidth) {
@@ -29,7 +41,7 @@ buttonWidth - ширина кнопки */
 					item.css('right', params.rightPosition/2 - (params.minWindowWidth - $(window).width())/divider + 'px');
 
 					if (item.hasClass('scroll')) {
-						item.show(500);
+						item.show(params.speed);
 					}
 				}
 
@@ -45,7 +57,7 @@ buttonWidth - ширина кнопки */
 			item.click(function() {
 				$('html, body').animate({
 				'scrollTop': 0
-				}, 500, function() {
+				}, params.speed, function() {
 					item.stop(true, true);
 				});
 			return false;
@@ -54,10 +66,10 @@ buttonWidth - ширина кнопки */
 			$(window).scroll(function() {
 				if ($(window).scrollTop() > 0 && !item.hasClass('hidden')) {
 					item.addClass('scroll');
-					item.show(500);
+					item.show(params.speed);
 				} else {
 					item.removeClass('scroll');
-					item.hide(500);
+					item.hide(params.speed);
 				}
 			});
 			$(window).scroll();
