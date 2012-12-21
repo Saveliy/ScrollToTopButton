@@ -4,7 +4,7 @@
 			minScroll: 0,
 			minWidth: 900,
 			speed: 1000,
-			easing: 'easeInSine',
+			easing: 'swing',
 			click: function(item) {
 				item.click(function() {
 					$('html, body').animate({
@@ -17,7 +17,7 @@
 				})
 			},
 			hidden: function(item) {
-				item.hide(this.speed);
+				this.hide(this.speed);
 			},
 			callback: function() {
 				return false
