@@ -17,7 +17,7 @@
 				})
 			},
 			hidden: function(item) {
-				this.hide(this.speed);
+				item.hide(settings.speed);
 			},
 			callback: function() {
 				return false
